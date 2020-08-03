@@ -35,7 +35,7 @@ $(function() {
       },
       dataType: "jsonp",
       success: function(data) {
-        console.log(data);
+        // console.log(data);
         $('input[name=address]').val(data[0].delivery_line_1);
         $('input[name=zip]').val(data[0].components.zipcode);
         $('input[name=city]').val(data[0].components.city_name);
@@ -53,6 +53,7 @@ $(function() {
         }
         $("#registered_county").val(county_name);
         $("#registered_county").prop('readonly', 'true');
+        $("#us-autocomplete-pro-address-input").prop('readonly', 'true');
       },
       error: function(error) {
         return error;
@@ -137,7 +138,7 @@ $(function() {
 
   $("#us-autocomplete-pro-address-input").keyup(function(event) {
     var menu = $(".us-autocomplete-pro-menu");
-    if ($("#address").val()) clearAddressData();
+    // if ($("#address").val()) clearAddressData();
     if (event.key === "ArrowDown") {
       menu.focus();
       menu.menu("focus", null, menu.menu().find(".ui-menu-item"));
