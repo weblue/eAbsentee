@@ -1,19 +1,23 @@
-from typing import List
+"""
+This script is used to delete sent emails from your Gmail inbox.
+It is better explained through a Medium post I wrote - however, that Medium post is for checking for bounce-backed emails. This script is used to delete sent emails for user privacy.
+https://medium.com/@raunakdaga/how-to-check-for-bounce-backed-emails-in-python-3-7-6ab0c297f81c
+- Raunak Daga 1/17/21
+"""
+
 import yagmail
-from googleapiclient import discovery
 import email
-from httplib2 import Http
-from oauth2client import file, client, tools
 import re
 import base64
 import os
 import sys
-
-
+from httplib2 import Http
+from oauth2client import file, client, tools
+from googleapiclient import discovery
+from typing import List
 
 # Change current working directory, only needed for Atom
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
-
 
 def delete_emails() -> List:
     # Gets authentication json if it's been implemented before
@@ -27,6 +31,7 @@ def delete_emails() -> List:
             'credentials.json', SCOPES)
         creds = tools.run_flow(flow, store)
 
+
     # Builds connection to gmail client
     GMAIL = discovery.build('gmail', 'v1', http=creds.authorize(Http()))
 
@@ -38,13 +43,10 @@ def delete_emails() -> List:
     sent_messages = GMAIL.users().messages().list(
         userId=user_id, labelIds=[label_id_one], maxResults=1000).execute()
 
-    print(sent_messages)
     message_list = sent_messages['messages']
-
     to_delete = []  # Final list of undeliverable messages
 
     for message in message_list:
-        print(message)
         message_id = message['id']
 
         message = GMAIL.users().messages().get(
@@ -56,7 +58,7 @@ def delete_emails() -> List:
         # Subject of Email
         for parts_of_header in header:
             if parts_of_header['name'] == 'Subject':
-                if 'Absentee Ballot Request' in parts_of_header['value']:
+                if 'Request' in parts_of_header['value']:
                     to_delete.append(message_id)
 
         snippet = message['snippet']
